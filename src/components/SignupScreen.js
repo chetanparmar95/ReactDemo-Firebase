@@ -48,12 +48,11 @@ class SignupScreen extends PureComponent {
     }
 
     signUp(){
+        if(Validation.validateSignUpForm(this.state, (state) => {
+            this.setState(state)
+        })){
             this.setState({showTAndC: true});
-        // if(Validation.validateSignUpForm(this.state, (state) => {
-        //     this.setState(state)
-        // })){
-        //     this.props.register({email:this.state.email,password: this.state.password})
-        // }
+        }
     }
 
     validateEmail(email){
@@ -146,6 +145,10 @@ class SignupScreen extends PureComponent {
 
                 <TermsAndConditions
                     visible = {this.state.showTAndC}
+                    onAgree = {() => {
+                        this.setState({showTAndC: false});
+                        this.props.register({email:this.state.email,password: this.state.password})
+                    }}
                     onPress={() => {
                         this.setState({showTAndC: false})
                     }}

@@ -10,14 +10,14 @@ export default {
     [ModuleEvents.LOGIN]: ({dispatch, payload, appState}) => {
         if(payload.user){
             Functions.storeAuth(payload.user.refreshToken);
-            dispatch(Actions.common.navigate("Home"))
+            dispatch(Actions.common.navigate("Home", {clearStack: true}))
         }
     },
 
     [ModuleEvents.REGISTER]: ({dispatch, payload, appState}) => {
         if(payload.user){
             Functions.storeAuth(payload.user.refreshToken);
-            dispatch(Actions.common.navigate("Home"))
+            dispatch(Actions.common.navigate("Home", {clearStack: true}))
         }
     },
 

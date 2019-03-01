@@ -17,7 +17,7 @@ export const Reducer = (state = InitialState, action) => {
     const {payload, type} = action;
     switch (type) {
         case ModuleEvents.LOADING:{
-            return state.set('loading', true).set('emailError', null)
+            return state.set('loading', true).set('emailError', null).set('passwordError', null)
         }
 
         case ModuleEvents.LOGIN:{

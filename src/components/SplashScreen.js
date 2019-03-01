@@ -5,9 +5,10 @@ import {
     Text,
     AsyncStorage,
 } from 'react-native'
-import firebase from 'firebase';
 import {Colors} from "../utils/Colors";
 import LinearGradient from 'react-native-linear-gradient';
+import Actions from "../internal/modules/Actions";
+import {connect} from "react-redux";
 
 const styles = StyleSheet.create({
     linearGradient: {
@@ -23,7 +24,8 @@ const styles = StyleSheet.create({
         color: Colors.white,
     },
 });
-export default class SplashScreen extends PureComponent {
+
+class SplashScreen extends PureComponent {
 
     getAuth = async() => {
         return await AsyncStorage.getItem('Auth');
@@ -32,12 +34,7 @@ export default class SplashScreen extends PureComponent {
     componentDidMount() {
         setTimeout(() => {
             this.getAuth().then(auth => {
-                console.log('auth', auth);
-                if(auth){
-                    this.props.navigation.navigate('Home')
-                }else{
-                    this.props.navigation.navigate('Login')
-                }
+                this.props.navigate(auth ? "Home" : "Login",{clearStack: true})
             });
         }, 1000);
     }
@@ -54,3 +51,12 @@ export default class SplashScreen extends PureComponent {
         )
     }
 }
+
+
+export default connect(
+    appState => ({
+    }),
+    dispatch => ({
+        navigate: (view, navigationData) => dispatch(Actions.common.navigate(view, navigationData)),
+    }),
+)(SplashScreen);

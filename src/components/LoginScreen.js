@@ -2,7 +2,7 @@ import React, {PureComponent} from 'react'
 import {
     ActivityIndicator,
     StyleSheet, Text, KeyboardAvoidingView,
-    View, Alert, TouchableOpacity
+    View, Alert, TouchableOpacity, BackHandler
 } from 'react-native'
 import EditTextView from "./common/EditTextView";
 import {Colors} from "../utils/Colors";
@@ -26,12 +26,17 @@ class LoginScreen extends PureComponent {
         };
     }
 
-    componentDidMount() {
-
+    componentWillMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.backPressed);
     }
 
     componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.backPressed);
+    }
 
+    backPressed = () => {
+        BackHandler.exitApp();
+        return true;
     }
 
     signIn(){
@@ -39,7 +44,6 @@ class LoginScreen extends PureComponent {
                 this.setState(state)
             })){
             this.props.login({email:this.state.email,password: this.state.password})
-            // this.props.login()
         }
     }
 
@@ -61,17 +65,7 @@ class LoginScreen extends PureComponent {
         this.setState({
             loading: nextProps.loading,
             emailError: nextProps.emailError,
-        }, () => {
-            if(!this.state.loading && nextProps.loginErrorMessage){
-                Alert.alert(
-                    'Authentication Failed',
-                    nextProps.loginErrorMessage,
-                    [
-                        {text: 'OK', onPress: () => console.log('OK Pressed')},
-                    ],
-                    {cancelable: false},
-                );
-            }
+            passwordError: nextProps.passwordError,
         });
     }
 
@@ -126,10 +120,12 @@ class LoginScreen extends PureComponent {
 export default connect(
     appState => ({
         loading: appState.user.get('loading'),
-        // loginErrorMessage: appState.user.get('loginErrorMessage')
+        emailError: appState.user.get('emailError'),
+        passwordError: appState.user.get('passwordError'),
     }),
     dispatch => ({
         login: (user) => dispatch(Actions.user.login(dispatch, user)),
+        navigate: (view, navigationData) => dispatch(Actions.common.navigate(view, navigationData)),
     }),
 )(LoginScreen);
 

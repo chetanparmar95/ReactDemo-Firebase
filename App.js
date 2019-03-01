@@ -14,6 +14,12 @@ import HomeScreen from "./src/components/HomeScreen";
 import configureStore from './src/internal/store';
 const store = configureStore();
 
+global.Symbol = require('core-js/es6/symbol');
+require('core-js/fn/symbol/iterator');
+require('core-js/fn/map');
+require('core-js/fn/set');
+require('core-js/fn/array/find');
+
 const RootStack = createStackNavigator({
         SplashScreen: {
             screen: SplashScreen,
@@ -47,15 +53,6 @@ export default class App extends Component {
             messagingSenderId: "1003965980109"
         });
 
-        firebase.auth().onAuthStateChanged(user => {
-            if(user){
-                console.log('already logged in');
-                this.setState({ loggedIn: true });
-            }else{
-                console.log('logged out');
-                this.setState({ loggedIn: false });
-            }
-        });
     }
 
   render() {

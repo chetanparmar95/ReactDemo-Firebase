@@ -5,23 +5,39 @@ import {
     Text,
     Image,
     AsyncStorage,
+    BackHandler,
+    Alert
 } from 'react-native'
 import firebase from 'firebase';
 import {Colors} from "../utils/Colors";
 import {Functions} from "../utils/Functions";
 import LinearGradient from 'react-native-linear-gradient';
 import GradientButton from './common/GradientButton'
+import Actions from "../internal/modules/Actions";
+import {connect} from "react-redux";
 
 
-export default class SplashScreen extends PureComponent {
+class HomeScreen extends PureComponent {
 
-    componentDidMount() {
-
+    componentWillMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.backPressed);
     }
 
     componentWillUnmount() {
-
+        BackHandler.removeEventListener('hardwareBackPress', this.backPressed);
     }
+
+    backPressed = () => {
+        Alert.alert(
+            'Exit App',
+            'Do you want to exit?',
+            [
+                {text: 'No', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                {text: 'Yes', onPress: () => BackHandler.exitApp()},
+            ],
+            { cancelable: false });
+        return true;
+    };
 
     clearStorage = async() => {
         await AsyncStorage.clear();
@@ -30,7 +46,8 @@ export default class SplashScreen extends PureComponent {
     signOut(){
         this.clearStorage().then(() => {
             firebase.auth().signOut();
-            this.props.navigation.navigate('Login');
+            this.props.navigate("Login",{clearStack: true});
+            // this.props.navigation.navigate('Login');
         });
     }
 
@@ -55,6 +72,15 @@ export default class SplashScreen extends PureComponent {
         )
     }
 }
+
+export default connect(
+    appState => ({
+    }),
+    dispatch => ({
+        navigate: (view, navigationData) => dispatch(Actions.common.navigate(view, navigationData)),
+    }),
+)(HomeScreen);
+
 
 const styles = StyleSheet.create({
     linearGradient: {
